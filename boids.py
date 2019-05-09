@@ -55,3 +55,12 @@ class Obstacle:
 
     def draw(self, screen):
         pygame.draw.circle(screen, THECOLORS['blue'], (int(self.pos.x), int(self.pos.y)), self.radius)
+
+class Line:
+    
+    def __init__(self, *args, **kwargs):
+        self.posx = 200
+        self.posy = 20
+        
+    def draw(self, screen):
+        pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (self.posx + 200, self.posy + 200), 10)

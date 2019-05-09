@@ -20,6 +20,10 @@ class Program:
         self.event_handler()                            # a event handler function
         self.move_all_boids_to_new_positions()          # a moving function for boids
         self.move_all_hoiks_to_new_positions()          # a moving function for hoiks
+
+
+
+
         self.run()                                      # the run function that runs all the functions together
 
     def add_all(self):
@@ -41,7 +45,8 @@ class Program:
         A function that first draws the screen,
         and then draws all the objects in the screen
         """
-        self.screen.fill(THECOLORS['black'])
+        self.screen.fill(THECOLORS['darkgreen'])
+
 
         for boid in self.boid_list:
             boid.draw(self.screen)
@@ -98,10 +103,13 @@ class Program:
         The run function that runs all the other functions together and
         make the program "run"
         """
+
         while True:
             self.clock.tick(FPS)
             self.event_handler()
             self.draw_all()
+            aline = Line()
+            aline.draw(self.screen)
             self.move_all_boids_to_new_positions()
             self.move_all_hoiks_to_new_positions()
 
