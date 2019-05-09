@@ -10,7 +10,7 @@ class Bird:
     def __init__(self):
         self.pos        = Vector2D(int(random.random()*SCREEN_X), int(random.random()*SCREEN_Y))
         self.radius     = BOID_RADIUS
-        self.speed      = Vector2D(int(random.random()*2), int(random.random()*-2))
+        self.speed      = Vector2D(int(random.random()*0), int(random.random()*-0))
 
     def move(self):
         if self.pos.x > SCREEN_X - self.radius:
@@ -21,10 +21,10 @@ class Bird:
             self.pos.y = SCREEN_Y - self.radius
         if self.pos.y < 0 + self.radius:
             self.pos.y = 0 + self.radius
-
+        
         if self.speed.magnitude() > BOID_MAXSPEED:
             self.speed = self.speed.normalized()*BOID_MAXSPEED
-
+        
         self.pos += self.speed
 
 
@@ -58,9 +58,12 @@ class Obstacle:
 
 class Line:
     
-    def __init__(self, *args, **kwargs):
-        self.posx = 200
-        self.posy = 20
-        
-    def draw(self, screen):
-        pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (self.posx + 200, self.posy + 200), 10)
+    def __init__(self, x, y):
+        self.posx = x
+        self.posy = y
+
+    def draw(self, screen, direction, length):
+        if direction == HORISONTAL:
+            pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (length, self.posy), 3)
+        if direction == VERTICAL: 
+            pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (self.posx, length), 3)
