@@ -62,8 +62,8 @@ class Line:
         self.posx = x
         self.posy = y
 
-    def draw(self, screen, direction, length):
+    def draw(self, screen, direction, length, color = THECOLORS['white']):
         if direction == HORISONTAL:
-            pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (length, self.posy), 3)
+            pygame.draw.line(screen, color, (self.posx, self.posy), (length, self.posy), 3)
         if direction == VERTICAL: 
-            pygame.draw.line(screen, THECOLORS['white'], (self.posx, self.posy), (self.posx, length), 3)
+            pygame.draw.line(screen, color, (self.posx, self.posy), (self.posx, length), 3)

@@ -2,37 +2,55 @@ from precode import *
 from variables import *
 from pygame.color import *
 
-class Object:
-
-    def __init__(self, x, y):
-        self.pos    = Vector2D(int(x), int(y))
+class Object(pygame.sprite.Sprite):
+    def __init__(self, img, x, y):
+        
+        super().__init__()
+        
         self.radius = PLAYER_RADIUS 
         self.speed = Vector2D(0,0)
+        self.img = img
 
-    def move(self, move):
-        # Can not move outside screen
-        if self.pos.x > SCREEN_X - self.radius:
-            self.pos.x = SCREEN_X - self.radius
-        if self.pos.x < 0 + self.radius:
-            self.pos.x = 0 + self.radius
-        if self.pos.y > SCREEN_Y - self.radius:
-            self.pos.y = SCREEN_Y - self.radius
-        if self.pos.y < 0 + self.radius:
-            self.pos.y = 0 + self.radius
+        self.image = self.img
+
+        self.rect = img.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.angle = 0
         
-        if self.speed.magnitude() > PLAYER_MAXSPEED:
-            self.speed = self.speed.normalized()*BOID_MAXSPEED
+        self.dir_x = 0
+        self.dir_y = 0
 
-        self.pos += self.speed
+    def move(self):
+        self.rect.x += math.cos(math.radians(self.angle + 90)) * 2
+        self.rect.y -= math.sin(math.radians(self.angle + 90)) * 2
     
-    def draw(self, screen, color):
-        pygame.draw.circle(screen, color, (int(self.pos.x, int(self.pos.y)), self.radius))
+    def update(self):
+        self.rect.x += self.dir_x
+        self.rect.y += self.dir_y
+        self.image = pygame.transform.rotate(self.img, self.angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
 
 class Ball(Object):
     pass
 
 class Player(Object):
-    pass
+    def __init__(self, img, x, y):
+        super().__init__(img, x, y)
+
+    
+    def rotate_right(self, angle):
+        self.angle -= angle
+        
+        if self.angle >=360:
+            self.angle = 0
+
+    def rotate_left(self, angle):
+        self.angle += angle
+
+        if self.angle >=360:
+            self.angle = 0
+
 
 class Keeper(Player):
     pass
