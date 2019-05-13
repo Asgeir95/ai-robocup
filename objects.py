@@ -1,14 +1,14 @@
 from precode import *
 from variables import *
 from pygame.color import *
-
+from vector2d import Vec2d
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, radius, color):
         
         super().__init__()
-        self.pos        = Vector2D(x, y)
+        self.pos        = Vec2d(x, y)
         self.radius = radius 
-        self.speed = Vector2D(0,0)
+        self.speed = Vec2d(0,0)
         self.color = color
 
     def move(self):
@@ -21,7 +21,7 @@ class Object(pygame.sprite.Sprite):
         if self.pos.y < 0 + self.radius:
             self.pos.y = 0 + self.radius
         
-        if self.speed.magnitude() > BOID_MAXSPEED:
+        if self.speed.get_length() > BOID_MAXSPEED:
             self.speed = self.speed.normalized()*BOID_MAXSPEED
         
         self.pos += self.speed

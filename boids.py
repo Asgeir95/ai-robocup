@@ -8,9 +8,9 @@ class Bird:
     The main class for birds
     """
     def __init__(self):
-        self.pos        = Vector2D(int(random.random()*SCREEN_X), int(random.random()*SCREEN_Y))
+        self.pos        = Vec2d(int(random.random()*SCREEN_X), int(random.random()*SCREEN_Y))
         self.radius     = BOID_RADIUS
-        self.speed      = Vector2D(int(random.random()*0), int(random.random()*-0))
+        self.speed      = Vec2d(int(random.random()*0), int(random.random()*-0))
 
     def move(self):
         if self.pos.x > SCREEN_X - self.radius:
@@ -22,7 +22,7 @@ class Bird:
         if self.pos.y < 0 + self.radius:
             self.pos.y = 0 + self.radius
         
-        if self.speed.magnitude() > BOID_MAXSPEED:
+        if self.speed.get_length() > BOID_MAXSPEED:
             self.speed = self.speed.normalized()*BOID_MAXSPEED
         
         self.pos += self.speed
@@ -50,7 +50,7 @@ class Obstacle:
     The class for obstacles
     """
     def __init__(self):
-        self.pos        = Vector2D(int(random.random()*SCREEN_X), int(random.random()*SCREEN_Y))
+        self.pos        = Vec2d(int(random.random()*SCREEN_X), int(random.random()*SCREEN_Y))
         self.radius     = OBSTACLE_RADIUS
 
     def draw(self, screen):

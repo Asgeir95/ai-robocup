@@ -132,6 +132,12 @@ class Program:
     def move_all_players(self):
         for player in self.team1_list:
             rule1 = move_to_ball(player, self.ball)
+            catch_ball(player, self.ball)
+
+            player.speed -= rule1
+            player.move()
+
+
 
     """
     def move_all_boids_to_new_positions(self):
@@ -186,6 +192,7 @@ class Program:
             self.event_handler()
             self.draw_all()
             self.draw_field()
+            self.move_all_players()
             pygame.display.update()
 
 
