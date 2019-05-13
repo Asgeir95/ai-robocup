@@ -2,6 +2,25 @@ from __future__ import division
 from boids import *
 from precode import *
 
+def close_ball(p, ball):
+    closeball_list = []
+    if (p.pos - ball.pos).magnitude() < VIEW_DISTANCE:
+        closeball_list.append(p)
+    return closeball_list
+
+def move_to_ball(p, ball):
+    closeball = close_ball(p, ball)
+    senter = Vector2D(0, 0)
+    for p in closeball:
+        senter += p.pos
+
+    if len(closeball) != 0:
+        senter /= len(closeball)
+
+    if senter.magnitude != 0:
+        return (senter - ball.pos) / 100
+    
+    return Vector2D(0, 0)
 
 def Close_boids(boid_list, boid):
     """
