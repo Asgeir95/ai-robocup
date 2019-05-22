@@ -1,19 +1,12 @@
 from __future__ import division
 #!/usr/bin/env python
 
-""" Pre-code for INF-1400
-
-22 January 2012 Revision 2 (Martin Ernstsen):
-Reraise exception after showing error message.
-
-11 February 2011 Revision 1 (Martin Ernstsen):
-Fixed bug in intersect_circle. Updated docstrings to Python standard.
-Improved __mul__. Added some exception handling. Put example code in separate
-function.
-
-"""
 import pygame
 import math
+
+def ball_distance(player, ball):
+    return (ball.pos - player.pos).get_length()
+    
 
 def intersect_rectangle_circle(rec_pos, sx, sy, circle_pos, circle_radius, circle_speed):
     """ Determine if a rectangle and a circle intersects.

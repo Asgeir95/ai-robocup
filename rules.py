@@ -1,32 +1,6 @@
-from __future__ import division
 from boids import *
-from precode import *
+from utilities import *
 from vector2d import Vec2d
-
-def ball_distance(player, ball):
-    return (ball.pos - player.pos).get_length()
-  
-def move_to_ball(player, ball):
-    distance = ball_distance(player, ball)
-    print("balldistance = {}".format(distance))
-    senter = Vec2d(0, 0)
-    
-    senter += player.pos
-
-    if senter.get_length() != 0:
-        return (senter - ball.pos) / 10
-    
-    return Vec2d(0, 0)
-
-def catch_ball(player, ball):
-    distance = ball_distance(player, ball)
-
-    impulse = intersect_circles(player.pos, player.radius, ball.pos, ball.radius)
-    if impulse:
-        print("yofag")
-        (ball.pos -player.pos).normalized() 
-
-
 def Close_boids(boid_list, boid):
     """
     Find the close boids

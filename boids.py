@@ -1,4 +1,4 @@
-from precode import *
+from utilities import *
 from variables import *
 from pygame.color import *
 import random

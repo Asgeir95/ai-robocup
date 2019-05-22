@@ -7,22 +7,18 @@ class Program:
     The class for the program that runs all the files together
     """
     def __init__(self):
-        pygame.init()
-        pygame.display.set_caption("ROBOCUP")
         self.screen     = pygame.display.set_mode(SCREEN_SIZE)
-        self.clock      = pygame.time.Clock()
-
         self.sidelines_list = []
         self.vertical_list = []
         self.goalline_list = []
         self.ball = Ball(150,150, 5, THECOLORS["yellow"])
+        self.shit = Ball(750, 400, 10, THECOLORS["black"])
         self.team1_list = []
         #self.boid_list      = []                        # a list of boids
         #self.hoik_list      = []                        # a list of hoiks
         #self.obstacle_list   = []                       # a list of obstacles
         self.add_all()                                  # a add_all function
-        self.draw_all()                                  # a draw_all function
-
+        
     def draw_field(self):
         upperline = Line(DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN)
         lowerline  = Line(DISTANCE_FROM_SCREEN, SCREEN_Y - DISTANCE_FROM_SCREEN)
@@ -101,11 +97,6 @@ class Program:
         for i in range(NUMBER_OF_BOIDS):
             self.boid_list.append(Boid())
 
-        for i in range(NUMBER_OF_HOIKS):
-            self.hoik_list.append(Hoik())
-
-        for i in range(NUMBER_OF_OBSTACLES):
-            self.obstacle_list.append(Obstacle())
         """
     def draw_all(self):
         """
@@ -118,23 +109,20 @@ class Program:
             player.draw(self.screen)
         
         self.ball.draw(self.screen)
+        self.shit.draw(self.screen)
         """
         for boid in self.boid_list:
             boid.draw(self.screen)
 
-        for hoik in self.hoik_list:
-            hoik.draw(self.screen)
-
-        for obstacle in self.obstacle_list:
-            obstacle.draw(self.screen)
         """
     
     def move_all_players(self):
         for player in self.team1_list:
-            rule1 = move_to_ball(player, self.ball)
-            catch_ball(player, self.ball)
+            player.speed -= player.move_to_ball(self.ball)
+            if player.catch_ball(self.ball) == True:
+                self.ball.speed += player.speed
+                self.ball.move(2)
 
-            player.speed -= rule1
             player.move()
 
 
@@ -155,24 +143,8 @@ class Program:
             b.speed += v1 + v2 + v3 + v4 + v5
             b.move()
 
-        
-
-    def move_all_hoiks_to_new_positions(self):
-        
-        #A function that put all the rules for the hoiks together and
-        #then moves the boid with those rules.
-        
-        for h in self.hoik_list:
-            v1 = Hoik_Rule1(self.boid_list, h)
-            v2 = Hoik_Rule2(self.hoik_list, h)
-            v3 = Rule5(self.obstacle_list, h)
-
-            h.speed += v1 + v2 + v3
-            h.move()
-
-        pygame.display.update()
-
     """
+
     def event_handler(self):
         """
         A funtion that handle all the events the user is putting in.
@@ -187,8 +159,11 @@ class Program:
         The run function that runs all the other functions together and
         make the program "run"
         """
+        pygame.init()
+        pygame.display.set_caption("ROBOCUP")
+        clock      = pygame.time.Clock()
         while True:
-            self.clock.tick(FPS)
+            clock.tick(FPS)
             self.event_handler()
             self.draw_all()
             self.draw_field()

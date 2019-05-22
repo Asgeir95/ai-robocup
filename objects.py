@@ -1,7 +1,8 @@
-from precode import *
+from utilities import *
 from variables import *
 from pygame.color import *
 from vector2d import Vec2d
+from rules import *
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, radius, color):
         
@@ -21,8 +22,8 @@ class Object(pygame.sprite.Sprite):
         if self.pos.y < 0 + self.radius:
             self.pos.y = 0 + self.radius
         
-        if self.speed.get_length() > BOID_MAXSPEED:
-            self.speed = self.speed.normalized()*BOID_MAXSPEED
+        if self.speed.get_length() > PLAYER_MAXSPEED:
+            self.speed = self.speed.normalized()*PLAYER_MAXSPEED
         
         self.pos += self.speed
 
@@ -34,24 +35,38 @@ class Ball(Object):
     def __init__(self, x, y, radius, color):
         super().__init__(x, y, radius, color)
 
+    def move(self, speed):
+        self.pos += speed
+
 class Player(Object):
     def __init__(self, x, y, radius, color):
         super().__init__(x, y, radius, color)
 
-    
-    def rotate_right(self, angle):
-        self.angle -= angle
+    def move_to_ball(self, ball):
+        distance = ball_distance(self, ball)
+        print("balldistance = {}".format(distance))
+        senter = Vec2d(0, 0)
         
-        if self.angle >=360:
-            self.angle = 0
+        senter += self.pos
 
-    def rotate_left(self, angle):
-        self.angle += angle
+        if senter.get_length() != 0:
+            return (senter - ball.pos) / 10
+        
+        return Vec2d(0, 0)
 
-        if self.angle >=360:
-            self.angle = 0
+    def catch_ball(self, ball):
+        distance = ball_distance(self, ball)
 
+        impact = intersect_circles(self.pos, self.radius, ball.pos, ball.radius)
+        if impact:
+            return True
+        else:
+            return False
+    
+    def pass_ball(self, teammate, ball):
+        pos = teammate.pos
 
+            
 class Keeper(Player):
     pass
 
