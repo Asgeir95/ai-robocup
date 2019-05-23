@@ -1,4 +1,3 @@
-from __future__ import division
 #!/usr/bin/env python
 
 import pygame

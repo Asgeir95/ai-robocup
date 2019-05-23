@@ -1,6 +1,8 @@
 from rules import *
 from variables import *
 from objects import *
+from ball import *
+from player import *
 
 class Program:
     """
@@ -119,11 +121,11 @@ class Program:
     def move_all_players(self):
         for player in self.team1_list:
             player.speed -= player.move_to_ball(self.ball)
-            if player.catch_ball(self.ball) == True:
-                self.ball.speed += player.speed
-                self.ball.move(2)
-
             player.move()
+            if player.catch_ball(self.ball) == True:
+                player.speed == (0,0)
+                self.ball.move(10)
+
 
 
 
