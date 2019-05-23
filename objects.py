@@ -1,14 +1,15 @@
-from precode import *
+from utilities import *
 from variables import *
 from pygame.color import *
-
+from vector2d import Vec2d
+from rules import *
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, radius, color):
         
         super().__init__()
-        self.pos        = Vector2D(x, y)
+        self.pos = Vec2d(x, y)
         self.radius = radius 
-        self.speed = Vector2D(0,0)
+        self.speed = Vec2d(0,0)
         self.color = color
 
     def move(self):
@@ -21,8 +22,8 @@ class Object(pygame.sprite.Sprite):
         if self.pos.y < 0 + self.radius:
             self.pos.y = 0 + self.radius
         
-        if self.speed.magnitude() > BOID_MAXSPEED:
-            self.speed = self.speed.normalized()*BOID_MAXSPEED
+        if self.speed.get_length() >= PLAYER_MAXSPEED:
+            self.speed = self.speed.normalized()*PLAYER_MAXSPEED
         
         self.pos += self.speed
 
@@ -30,36 +31,21 @@ class Object(pygame.sprite.Sprite):
             pygame.draw.circle(screen, self.color, (int(self.pos.x), int(self.pos.y)), self.radius)
             pygame.draw.line(screen, THECOLORS['white'], (self.pos.x, self.pos.y), (self.pos.x + self.speed.x*2, self.pos.y + self.speed.y*2), 5)
 
-class Ball(Object):
-    def __init__(self, x, y, radius, color):
-        super().__init__(x, y, radius, color)
-
-class Player(Object):
-    def __init__(self, x, y, radius, color):
-        super().__init__(x, y, radius, color)
-
+class Line:
     
-    def rotate_right(self, angle):
-        self.angle -= angle
+    def __init__(self, x, y):
+        self.posx = x
+        self.posy = y
+        self.direction = None
+        self.length = None
+
+    def draw(self, screen, direction, length, color = THECOLORS['white']):
+        self.length = length
+        if direction == HORISONTAL:
+            pygame.draw.line(screen, color, (self.posx, self.posy), (length, self.posy), 3)
+        if direction == VERTICAL: 
+            pygame.draw.line(screen, color, (self.posx, self.posy), (self.posx, length), 3)
+
+    def get_pos(self):
+        return ((self.posx, self.posy), self.length)
         
-        if self.angle >=360:
-            self.angle = 0
-
-    def rotate_left(self, angle):
-        self.angle += angle
-
-        if self.angle >=360:
-            self.angle = 0
-
-
-class Keeper(Player):
-    pass
-
-class Defender(Player):
-    pass
-
-class Midfielder(Player):
-    pass
-
-class Attacker(Player):
-    pass
