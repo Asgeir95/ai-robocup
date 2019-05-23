@@ -16,9 +16,7 @@ class Program:
         self.ball = Ball(150,150, 5, THECOLORS["yellow"])
         self.shit = Ball(750, 400, 10, THECOLORS["black"])
         self.team1_list = []
-        #self.boid_list      = []                        # a list of boids
-        #self.hoik_list      = []                        # a list of hoiks
-        #self.obstacle_list   = []                       # a list of obstacles
+
         self.add_all()                                  # a add_all function
         
     def draw_field(self):
@@ -93,13 +91,12 @@ class Program:
         
         #A function that add all the objects to lists and appending the
         #objects
-        player1 = Player(100,100, 10, THECOLORS["red"])
-        self.team1_list.append(player1)
-        """
-        for i in range(NUMBER_OF_BOIDS):
-            self.boid_list.append(Boid())
+       # player1 = Player(100,100, 10, THECOLORS["red"])
+        player2 = Player(400,400, 10, THECOLORS["blue"])
+        #self.team1_list.append(player1)
+        self.team1_list.append(player2)
 
-        """
+
     def draw_all(self):
         """
         A function that first draws the screen,
@@ -112,40 +109,23 @@ class Program:
         
         self.ball.draw(self.screen)
         self.shit.draw(self.screen)
-        """
-        for boid in self.boid_list:
-            boid.draw(self.screen)
 
-        """
     
     def move_all_players(self):
         for player in self.team1_list:
-            player.speed -= player.move_to_ball(self.ball)
-            player.move()
-            if player.catch_ball(self.ball) == True:
-                player.speed == (0,0)
-                self.ball.move(10)
+            if player.catch_ball(self.ball) != True:
+                player.speed -= player.move_to_ball(self.ball)
+                player.move()
+            else:
+                #player.rotate_ball(self.ball, 90)
+                self.ball.move(5)
+                #print("player.pos = {}, player.angle = {}".format(player.pos, player.pos.get_angle()))
+                #print("ball.pos = {}, ball.angle = {}".format(self.ball.pos, self.ball.pos.get_angle()))
+
+            
 
 
 
-
-    """
-    def move_all_boids_to_new_positions(self):
-        
-        #A function that put all the rules for the boids together and
-        #then moves the boid with those rules.
-
-        for b in self.boid_list:
-            v1 = Rule1(self.boid_list, b)
-            v2 = Rule2(self.boid_list, b)
-            v3 = Rule3(self.boid_list, b)
-            v4 = Rule4(self.hoik_list, b)
-            v5 = Rule5(self.obstacle_list, b)
-
-            b.speed += v1 + v2 + v3 + v4 + v5
-            b.move()
-
-    """
 
     def event_handler(self):
         """

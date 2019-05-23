@@ -5,7 +5,6 @@ class Player(Object):
 
     def move_to_ball(self, ball):
         distance = ball_distance(self, ball)
-        print("balldistance = {}".format(distance))
         senter = Vec2d(0, 0)
         
         senter += self.pos
@@ -26,6 +25,10 @@ class Player(Object):
     
     def pass_ball(self, teammate, ball):
         pos = teammate.pos
+
+    def rotate_ball(self, ball, angle):
+        #self.pos.rotated(angle)
+        ball.pos.rotated(angle)
 
             
 class Keeper(Player):

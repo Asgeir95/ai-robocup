@@ -9,4 +9,3 @@ class Ball(Object):
             self.speed = self.speed.normalized()*BALL_MAXSPEED
 
         self.pos += speed
-        self.speed += self.pos

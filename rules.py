@@ -1,4 +1,3 @@
-from boids import *
 from utilities import *
 from vector2d import Vec2d
 def Close_boids(boid_list, boid):
@@ -92,49 +91,3 @@ def Rule5(object_list, boid):
     if distance.magnitude() != 0:
         return distance
     return Vec2d(0, 0)
-
-
-def Close_hoiks(hoik_list, hoik):
-    """
-    Find the close hoiks
-    """
-    closehoiks_list = []
-    for h in hoik_list:
-        if h != hoik:
-            if (h.pos - hoik.pos).magnitude() < HOIK_VIEW_DISTANCE:
-                closehoiks_list.append(h)
-    return closehoiks_list
-
-
-def Hoik_Rule1(boid_list, hoik):
-    """
-    Rule 1: Hoiks try to fly towards the centre to the mass of neighbouring boids.
-    """
-    close = Close_hoiks(boid_list, hoik)
-    senter = Vec2d(0, 0)
-    for h in close:
-        senter += h.pos
-
-    if len(close) != 0:
-        senter /= len(close)
-
-    if senter.magnitude() != 0:
-        return (senter - hoik.pos) / 2
-    return Vec2d(0, 0)
-
-
-def Hoik_Rule2(hoik_list, hoik):
-    """
-    Rule 2: Hoik try to keep a small distance away from other hoiks.
-    """
-    closehoik = Close_hoiks(hoik_list, hoik)
-    distance = Vec2d(0, 0)
-
-    for h in closehoik:
-        if (h.pos - hoik.pos).magnitude() < HOIK_DISTANCE:
-            distance -= (h.pos - hoik.pos)
-
-    if distance.magnitude() != 0:
-        return distance
-    return Vec2d(0, 0)
-
