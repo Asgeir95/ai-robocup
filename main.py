@@ -2,101 +2,177 @@ from rules import *
 from variables import *
 from objects import *
 
+
 class Program:
     """
     The class for the program that runs all the files together
     """
+
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("ROBOCUP")
-        self.screen     = pygame.display.set_mode(SCREEN_SIZE)
-        self.clock      = pygame.time.Clock()
+        pygame.display.set_caption("RoboCup 2D-simulation")
+        self.screen = pygame.display.set_mode(SCREEN_SIZE)
+        self.clock = pygame.time.Clock()
 
         self.sidelines_list = []
         self.vertical_list = []
         self.goalline_list = []
-        self.ball = Ball(150,150, 5, THECOLORS["yellow"])
+        self.ball = Ball(SCREEN_X / 2, SCREEN_Y / 2, 5, THECOLORS["yellow"])
         self.team1_list = []
-        #self.boid_list      = []                        # a list of boids
-        #self.hoik_list      = []                        # a list of hoiks
-        #self.obstacle_list   = []                       # a list of obstacles
-        self.add_all()                                  # a add_all function
-        self.draw_all()                                  # a draw_all function
+        # self.boid_list      = []                        # a list of boids
+        # self.hoik_list      = []                        # a list of hoiks
+        # self.obstacle_list   = []                       # a list of obstacles
+        self.add_all()  # a add_all function
+        self.draw_all()  # a draw_all function
 
     def draw_field(self):
         upperline = Line(DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN)
-        lowerline  = Line(DISTANCE_FROM_SCREEN, SCREEN_Y - DISTANCE_FROM_SCREEN)
+        lowerline = Line(DISTANCE_FROM_SCREEN, SCREEN_Y - DISTANCE_FROM_SCREEN)
 
         self.sidelines_list.extend([upperline, lowerline])
 
-        
         leftlineupper = Line(DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN)
-        leftlinelower = Line(DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
+        leftlinelower = Line(
+            DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2
+        )
         rigthlineupper = Line(SCREEN_X - DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN)
-        rigthlinelower = Line(SCREEN_X - DISTANCE_FROM_SCREEN, DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
+        rigthlinelower = Line(
+            SCREEN_X - DISTANCE_FROM_SCREEN,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2,
+        )
 
-        self.vertical_list.extend([leftlineupper, leftlinelower, rigthlineupper,rigthlinelower])
-        
-        goal1 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y/2 - GOAL/2)
-        goal2 = Line(DISTANCE_FROM_SCREEN + FIELD_H, SCREEN_Y/2 - GOAL/2)
+        self.vertical_list.extend(
+            [leftlineupper, leftlinelower, rigthlineupper, rigthlinelower]
+        )
+
+        goal1 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y / 2 - GOAL / 2)
+        goal2 = Line(DISTANCE_FROM_SCREEN + FIELD_H, SCREEN_Y / 2 - GOAL / 2)
 
         self.goalline_list.extend([goal1, goal2])
-
 
         # just drawings
         midline = Line(SCREEN_X / 2, DISTANCE_FROM_SCREEN)
 
-        penaltyline1 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y/2 + PENTALTY_VERTICAL/2)
-        penaltyline2 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y/2 - PENTALTY_VERTICAL/2)
-        penaltyline3 = Line(SCREEN_X - DISTANCE_FROM_SCREEN, SCREEN_Y / 2 + PENTALTY_VERTICAL/2)
-        penaltyline4 = Line(SCREEN_X - DISTANCE_FROM_SCREEN, SCREEN_Y / 2 - PENTALTY_VERTICAL/2)
-        penaltyline5 = Line(DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL, SCREEN_Y/2 - PENTALTY_VERTICAL/2 )
-        penaltyline6 = Line(SCREEN_X - DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL, SCREEN_Y/2 - PENTALTY_VERTICAL/2)
+        penaltyline1 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y / 2 + PENTALTY_VERTICAL / 2)
+        penaltyline2 = Line(DISTANCE_FROM_SCREEN, SCREEN_Y / 2 - PENTALTY_VERTICAL / 2)
+        penaltyline3 = Line(
+            SCREEN_X - DISTANCE_FROM_SCREEN, SCREEN_Y / 2 + PENTALTY_VERTICAL / 2
+        )
+        penaltyline4 = Line(
+            SCREEN_X - DISTANCE_FROM_SCREEN, SCREEN_Y / 2 - PENTALTY_VERTICAL / 2
+        )
+        penaltyline5 = Line(
+            DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL,
+            SCREEN_Y / 2 - PENTALTY_VERTICAL / 2,
+        )
+        penaltyline6 = Line(
+            SCREEN_X - DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL,
+            SCREEN_Y / 2 - PENTALTY_VERTICAL / 2,
+        )
 
-        goalline1 = Line(DISTANCE_FROM_SCREEN - GOAL_H , DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
-        goalline2 = Line(DISTANCE_FROM_SCREEN - GOAL_H , DISTANCE_FROM_SCREEN + FIELD_V/2 - GOAL/2)
-        goalline3 = Line(DISTANCE_FROM_SCREEN - GOAL_H, DISTANCE_FROM_SCREEN + FIELD_V/2 - GOAL/2)
+        goalline1 = Line(
+            DISTANCE_FROM_SCREEN - GOAL_H, DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2
+        )
+        goalline2 = Line(
+            DISTANCE_FROM_SCREEN - GOAL_H, DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2
+        )
+        goalline3 = Line(
+            DISTANCE_FROM_SCREEN - GOAL_H, DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2
+        )
 
-        goalline4 = Line(DISTANCE_FROM_SCREEN + FIELD_H, DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
-        goalline5 = Line(DISTANCE_FROM_SCREEN + FIELD_H, DISTANCE_FROM_SCREEN + FIELD_V/2 - GOAL/2)
-        goalline6 = Line(DISTANCE_FROM_SCREEN + FIELD_H + GOAL_H, DISTANCE_FROM_SCREEN + FIELD_V/2 - GOAL/2)
-
+        goalline4 = Line(
+            DISTANCE_FROM_SCREEN + FIELD_H,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2,
+        )
+        goalline5 = Line(
+            DISTANCE_FROM_SCREEN + FIELD_H,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2,
+        )
+        goalline6 = Line(
+            DISTANCE_FROM_SCREEN + FIELD_H + GOAL_H,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2,
+        )
 
         upperline.draw(self.screen, HORISONTAL, FIELD_H + DISTANCE_FROM_SCREEN)
         lowerline.draw(self.screen, HORISONTAL, FIELD_H + DISTANCE_FROM_SCREEN)
-        leftlineupper.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN+ FIELD_V/2 - GOAL/2)
-        leftlinelower.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN +FIELD_V)
-        rigthlineupper.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V/2 - GOAL/2)
-        rigthlinelower.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN +FIELD_V)
-        midline.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN +FIELD_V)
+        leftlineupper.draw(
+            self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2
+        )
+        leftlinelower.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V)
+        rigthlineupper.draw(
+            self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V / 2 - GOAL / 2
+        )
+        rigthlinelower.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V)
+        midline.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V)
 
-
-        pygame.draw.circle(self.screen, THECOLORS["white"], (int(SCREEN_X/2), int(SCREEN_Y/2)), 90, 3)
-        penaltyline1.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL)
-        penaltyline2.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL)
-        penaltyline3.draw(self.screen, HORISONTAL, SCREEN_X - DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL)
-        penaltyline4.draw(self.screen, HORISONTAL, SCREEN_X- DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL)
-        penaltyline5.draw(self.screen, VERTICAL, SCREEN_Y/2 + PENTALTY_VERTICAL/2)
-        penaltyline6.draw(self.screen, VERTICAL, SCREEN_Y/2 + PENTALTY_VERTICAL/2)
+        pygame.draw.circle(
+            self.screen,
+            THECOLORS["white"],
+            (int(SCREEN_X / 2), int(SCREEN_Y / 2)),
+            90,
+            3,
+        )
+        penaltyline1.draw(
+            self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL
+        )
+        penaltyline2.draw(
+            self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + PENTALTY_HORISONTAL
+        )
+        penaltyline3.draw(
+            self.screen,
+            HORISONTAL,
+            SCREEN_X - DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL,
+        )
+        penaltyline4.draw(
+            self.screen,
+            HORISONTAL,
+            SCREEN_X - DISTANCE_FROM_SCREEN - PENTALTY_HORISONTAL,
+        )
+        penaltyline5.draw(self.screen, VERTICAL, SCREEN_Y / 2 + PENTALTY_VERTICAL / 2)
+        penaltyline6.draw(self.screen, VERTICAL, SCREEN_Y / 2 + PENTALTY_VERTICAL / 2)
 
         goalline1.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN)
         goalline2.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN)
-        goalline3.draw(self.screen, VERTICAL,  DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
+        goalline3.draw(
+            self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2
+        )
 
         goalline4.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + FIELD_H + GOAL_H)
         goalline5.draw(self.screen, HORISONTAL, DISTANCE_FROM_SCREEN + FIELD_H + GOAL_H)
-        goalline6.draw(self.screen, VERTICAL,  DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2)
+        goalline6.draw(
+            self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2
+        )
 
-        goal1.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2, THECOLORS['black'])
-        goal2.draw(self.screen, VERTICAL, DISTANCE_FROM_SCREEN + FIELD_V/2 + GOAL/2, THECOLORS['black'])
+        goal1.draw(
+            self.screen,
+            VERTICAL,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2,
+            THECOLORS["black"],
+        )
+        goal2.draw(
+            self.screen,
+            VERTICAL,
+            DISTANCE_FROM_SCREEN + FIELD_V / 2 + GOAL / 2,
+            THECOLORS["black"],
+        )
 
-    
     def add_all(self):
-        
-        #A function that add all the objects to lists and appending the
-        #objects
-        player1 = Player(100,100, 10, THECOLORS["red"])
-        self.team1_list.append(player1)
+
+        # A function that add all the objects to lists and appending the
+        # objects
+        player = player((100), (SCREEN_Y / 2), 10, THECOLORS["darkblue"])
+        playerKeeper = Keeper((100), (SCREEN_Y / 2), 10, THECOLORS["darkblue"])
+        playerDefender = Defender((300), (SCREEN_Y / 2 - 225), 10, THECOLORS["blue"])
+        playerDefender2 = Defender((300), (SCREEN_Y / 2 + 225), 10, THECOLORS["blue"])
+        playerMidfielder = Midfielder((350), (SCREEN_Y / 2), 10, THECOLORS["blue"])
+        playerAttacker = Attacker(
+            (SCREEN_X / 2 - 100), (SCREEN_Y / 2), 10, THECOLORS["blue"]
+        )
+        self.team1_list.append(playerKeeper)
+        self.team1_list.append(playerDefender)
+        self.team1_list.append(playerDefender2)
+        self.team1_list.append(playerMidfielder)
+        self.team1_list.append(playerAttacker)
         """
         for i in range(NUMBER_OF_BOIDS):
             self.boid_list.append(Boid())
@@ -107,16 +183,16 @@ class Program:
         for i in range(NUMBER_OF_OBSTACLES):
             self.obstacle_list.append(Obstacle())
         """
+
     def draw_all(self):
         """
         A function that first draws the screen,
         and then draws all the objects in the screen
         """
-        self.screen.fill(THECOLORS['darkgreen'])
-        
+
         for player in self.team1_list:
             player.draw(self.screen)
-        
+
         self.ball.draw(self.screen)
         """
         for boid in self.boid_list:
@@ -128,7 +204,7 @@ class Program:
         for obstacle in self.obstacle_list:
             obstacle.draw(self.screen)
         """
-    
+
     def move_all_players(self):
         for player in self.team1_list:
             rule1 = move_to_ball(player, self.ball)
@@ -153,12 +229,12 @@ class Program:
 
     def move_all_hoiks_to_new_positions(self):
         
-        #A function that put all the rules for the hoiks together and
-        #then moves the boid with those rules.
+        #A function that put all the rules forT1_DEFENDER_START_POSX = SC
+        #then moves the boid with those rules.T1_DEFENDER_START_POSX = SC
         
         for h in self.hoik_list:
-            v1 = Hoik_Rule1(self.boid_list, h)
-            v2 = Hoik_Rule2(self.hoik_list, h)
+            v1 = Hoik_Rule1(self.boid_list, h)T1_DEFENDER_START_POSX = SC
+            v2 = Hoik_Rule2(self.hoik_list, h)T1_DEFENDER_START_POSX = SC
             v3 = Rule5(self.obstacle_list, h)
 
             h.speed += v1 + v2 + v3
@@ -167,6 +243,7 @@ class Program:
         pygame.display.update()
 
     """
+
     def event_handler(self):
         """
         A funtion that handle all the events the user is putting in.
@@ -181,11 +258,13 @@ class Program:
         The run function that runs all the other functions together and
         make the program "run"
         """
+        self.screen.fill(THECOLORS["darkgreen"])
         while True:
             self.clock.tick(FPS)
             self.event_handler()
-            self.draw_all()
             self.draw_field()
+            self.draw_all()
+            player.move()
             pygame.display.update()
 
 

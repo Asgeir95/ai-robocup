@@ -2,11 +2,13 @@ from __future__ import division
 from boids import *
 from precode import *
 
+
 def close_ball(p, ball):
     closeball_list = []
     if (p.pos - ball.pos).magnitude() < VIEW_DISTANCE:
         closeball_list.append(p)
     return closeball_list
+
 
 def move_to_ball(p, ball):
     closeball = close_ball(p, ball)
@@ -19,8 +21,9 @@ def move_to_ball(p, ball):
 
     if senter.magnitude != 0:
         return (senter - ball.pos) / 100
-    
+
     return Vector2D(0, 0)
+
 
 def Close_boids(boid_list, boid):
     """
@@ -33,6 +36,7 @@ def Close_boids(boid_list, boid):
                 closeboid_list.append(b)
     return closeboid_list
 
+
 def Rule1(boid_list, boid):
     """
     Rule 1: Boids try to fly towards the centre of mass of neighbouring boids.
@@ -42,7 +46,7 @@ def Rule1(boid_list, boid):
     for b in closeboids:
         senter += b.pos
 
-    if len(closeboids) !=0:
+    if len(closeboids) != 0:
         senter /= len(closeboids)
 
     if senter.magnitude() != 0:
@@ -59,7 +63,7 @@ def Rule2(boid_list, boid):
 
     for b in closeboids:
         if (b.pos - boid.pos).magnitude() < BOID_DISTANCE:
-            distance -= (b.pos - boid.pos)
+            distance -= b.pos - boid.pos
 
     if distance.magnitude() != 0:
         return distance / 5
@@ -92,7 +96,7 @@ def Rule4(hoik_list, boid):
 
     for b in close:
         if (b.pos - boid.pos).magnitude() < HOIK_DISTANCE:
-            distance -= (b.pos - boid.pos)
+            distance -= b.pos - boid.pos
 
     if distance.magnitude() != 0:
         return distance
@@ -108,7 +112,7 @@ def Rule5(object_list, boid):
 
     for b in close:
         if (b.pos - boid.pos).magnitude() < OBSTACLE_DISTANCE:
-            distance -= (b.pos - boid.pos)
+            distance -= b.pos - boid.pos
 
     if distance.magnitude() != 0:
         return distance
@@ -153,7 +157,7 @@ def Hoik_Rule2(hoik_list, hoik):
 
     for h in closehoik:
         if (h.pos - hoik.pos).magnitude() < HOIK_DISTANCE:
-            distance -= (h.pos - hoik.pos)
+            distance -= h.pos - hoik.pos
 
     if distance.magnitude() != 0:
         return distance
