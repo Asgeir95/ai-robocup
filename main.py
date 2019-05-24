@@ -1,9 +1,9 @@
-from rules import *
 from variables import *
 from objects import *
 from ball import *
 from player import *
 import random
+import time
 class Program:
     """
     The class for the program that runs all the files together
@@ -14,16 +14,18 @@ class Program:
         self.vertical_list = []
         self.goalline_list = []
         self.keeper_line_list = []
-        self.ball = Ball(SCREEN_X/2 - 100,SCREEN_Y/2, 6, THECOLORS["yellow"])
-        self.team1_list = []
-        self.team2_list = []
-        self.teams = [self.team1_list, self.team2_list]
+        ball = Ball(BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
+        self.red = Team(RED)
+        self.blue = Team(BLUE)
+        self.add_players()                     
+        self.teams = [self.red, self.blue]
 
-
-
+        self.ball_list = []
+        self.ball_list.append(ball)
+        self.redgoals = 0
+        self.bluegoals = 0
 
         self.draw_field()
-        self.add_all()                     
         
     def draw_field(self): 
         self.screen.fill(THECOLORS['darkgreen'])
@@ -96,56 +98,110 @@ class Program:
         goal2.draw(self.screen, VERTICAL, GOAL, THECOLORS['pink'])
 
     
-    def add_all(self):
-        player1red = Keeper(KEEPER_RED_POS.x, KEEPER_RED_POS.y,  10, THECOLORS["red"], 1)
-        player2red = Player(SCREEN_X / 2 - 200, SCREEN_Y/2 - 100, 10, THECOLORS["red"], 2)
-        player3red = Player(SCREEN_X / 2 - 200, SCREEN_Y/2 + 100, 10, THECOLORS["red"], 3)
+    def add_players(self):
+        player1red = Keeper(KEEPER_RED_POS.x, KEEPER_RED_POS.y,  PLAYER_RADIUS, THECOLORS["red"], 1, RED)
+        player2red = Player(RED_PLAYER2.x, RED_PLAYER2.y, PLAYER_RADIUS, THECOLORS["red"], 2, RED)
+       # player3red = Player(RED_PLAYER3.x, RED_PLAYER3.y, PLAYER_RADIUS, THECOLORS["red"], 3, RED)
+        player4red = Player(RED_PLAYER4.x, RED_PLAYER4.y, PLAYER_RADIUS, THECOLORS["red"], 4, RED)
 
-        player1blue = Keeper(KEEPER_BLUE_POS.x, KEEPER_BLUE_POS.y, 10, THECOLORS["blue"], 1)
-        player2blue = Player(SCREEN_X / 2 + 200, SCREEN_Y/2 - 100, 10, THECOLORS["blue"], 2)
-        player3blue = Player(SCREEN_X / 2 + 200, SCREEN_Y/2 + 100, 10, THECOLORS["blue"], 3)
+        player1blue = Keeper(KEEPER_BLUE_POS.x, KEEPER_BLUE_POS.y, PLAYER_RADIUS, THECOLORS["blue"], 12, BLUE)
+        player2blue = Player(BLUE_PLAYER2.x, BLUE_PLAYER2.y, PLAYER_RADIUS, THECOLORS["blue"], 13, BLUE)
+        #player3blue = Player(BLUE_PLAYER3.x, BLUE_PLAYER3.y, PLAYER_RADIUS, THECOLORS["blue"], 14, BLUE)
+        player4blue = Player(BLUE_PLAYER4.x, BLUE_PLAYER4.y, PLAYER_RADIUS, THECOLORS["blue"], 15, BLUE)
 
-        self.team1_list.extend([player1red, player2red, player3red])
-        self.team2_list.extend([player1blue, player2blue, player3blue])
+        self.red.add_player(player1red)
+        self.red.add_player(player2red) 
+        #self.red.add_player(player3red)
+        self.red.add_player(player4red)
+
+        self.blue.add_player(player1blue)
+        self.blue.add_player(player2blue)
+        #self.blue.add_player(player3blue)
+        self.blue.add_player(player4blue)
 
 
     def draw_all(self):
-        for player in self.team1_list:
-            player.draw(self.screen)
-        
-        for player in self.team2_list:
-            player.draw(self.screen)
-
-        self.ball.draw(self.screen)
+        for team in self.teams:
+            for player in team.players:
+                player.draw(self.screen)
+        self.ball_list[0].draw(self.screen)
 
     def move_all_players(self):
         for team in self.teams:
-            for player in team:
+            for player in team.players:
                 # Can not cross other players
-                player.personal_space(self.team1_list)
-                player.personal_space(self.team2_list)
-                if type(player) is Keeper:
-                    print("keeper: ", player.number)
-                    if player in self.team1_list:
-                        distance = (player.pos - KEEPER_RED_POS).get_length()
-                        if distance > 50:
-                            player.speed *= -1
+                player.personal_space(self.red.players)
+                player.personal_space(self.blue.players)
 
-                if player.pos.get_distance(self.ball.pos) <= 400:
-                    if not player.has_ball(self.ball):
-                        player._has_ball = False
-                        player.speed += player.move_to_ball(self.ball)
-                        player.move()
+                teammate = player.team_has_ball(team.players)
+                if not teammate:
+                    player.move_to_ball(self.ball_list[0], 1000)
+                    if player._has_ball == True:
+                        if player in self.red.players:
+                            goal = self.goalline_list[1]
+                            distance_to_goal = player.pos.get_distance(goal.pos)
+                            if  distance_to_goal < 1000:
+                                mate = player.find_free_teammate(self.teams, RED)
+                                if mate:
+                                    player.pass_ball(mate, self.ball_list[0])
+                            if distance_to_goal < 250:
+                                player.shoot(goal, self.ball_list[0])
+                        else:
+                            goal = self.goalline_list[0]
+                            distance_to_goal = player.pos.get_distance(goal.pos)
+                            if  distance_to_goal < 1000:
+                                mate = player.find_free_teammate(self.teams, BLUE)
+                                if mate:
+                                    player.pass_ball(mate, self.ball_list[0])
+                            if distance_to_goal < 250:
+                                player.shoot(goal, self.ball_list[0])
+                
+                # If our team has the ball
+                if teammate:
+                    if teammate.team == RED:
+                        goal = self.goalline_list[1]
                     else:
-                        player._has_ball = True
-                        #player.rotate_ball(self.ball, 90)
-                        if player in self.team1_list:
-                            goalpos = self.goalline_list[1].pos
-                        else: 
-                            goalpos = self.goalline_list[0].pos
-                        direction = (goalpos - self.ball.pos).normalized()
-                        self.ball.speed += direction * player.speed.get_length() 
-        self.ball.move()
+                        goal = self.goalline_list[0]
+
+                    player.find_free_space(teammate, goal)
+                # If our team does not have the ball
+        self.ball_list[0].move()
+
+    def rules(self):
+        redgoal = self.goalline_list[0]
+        bluegoal = self.goalline_list[1]
+        
+        if self.ball_list[0].is_goal(redgoal):
+            print("goal to blue")
+            self.bluegoals += 1
+            self.reset()
+            print("Score is {}:{}".format(self.bluegoals, self.redgoals))
+
+        if self.ball_list[0].is_goal(bluegoal):
+            print("goal to red")
+            self.redgoals += 1
+            self.reset()
+            print("Score is {}:{}".format(self.bluegoals, self.redgoals))
+
+        for line in self.sidelines_list:
+            if self.ball_list[0].is_throwin(line):
+                print("Throwin, reseting")
+                self.reset()
+        for line in self.vertical_list:
+            if self.ball_list[0].is_corner(line, self.screen):
+                print("Corner, reseting")
+                self.reset()
+        
+    def reset(self):
+        self.red.remove_all()
+        self.blue.remove_all()
+        self.ball_list.clear()
+
+        self.add_players()
+        ball = Ball(BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
+        self.ball_list.append(ball)
+    
+
     def event_handler(self):
         """
         A funtion that handle all the events the user is putting in.
@@ -154,6 +210,9 @@ class Program:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.reset()
 
     def run(self):
         """
@@ -170,6 +229,7 @@ class Program:
             self.draw_field()
             self.draw_all()
             self.move_all_players()
+            self.rules()
             pygame.display.update()
 
 
