@@ -216,13 +216,11 @@ class Program:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.reset()
+
     def scoreboard(self):
         font = pygame.font.Font('freesansbold.ttf', 32) 
-  
         text = font.render("Red {} | Blue {}".format(self.redgoals, self.bluegoals), True, THECOLORS["black"], THECOLORS["white"]) 
-        
         textRect = text.get_rect()  
-
         textRect.center = (SCREEN_X // 2, 20)
         self.screen.blit(text, textRect)  
 
@@ -235,7 +233,6 @@ class Program:
         pygame.display.set_caption("ROBOCUP")
         clock = pygame.time.Clock()
         
-                
         while True:
             clock.tick(FPS)
             self.event_handler()
@@ -243,8 +240,6 @@ class Program:
             self.draw_all()
             self.move_all_players()
             self.rules()
-            
-
             self.scoreboard()
             pygame.display.update()
 
