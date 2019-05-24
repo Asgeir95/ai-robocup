@@ -2,11 +2,23 @@ from utilities import *
 from variables import *
 from pygame.color import *
 from vector2d import Vec2d
-from rules import *
-class Object(pygame.sprite.Sprite):
+
+class Team():
+    def __init__(self, tID):
+        self.id = tID
+        self.players = []
+
+    def add_player(self, player):
+        if player not in self.players:
+            self.players.append(player)
+        else:
+            return("Player already added")
+
+    def remove_all(self):
+        self.players.clear()
+
+class Object():
     def __init__(self, x, y, radius, color):
-        
-        super().__init__()
         self.pos = Vec2d(x, y)
         self.radius = radius 
         self.speed = Vec2d(0,0)
@@ -27,25 +39,26 @@ class Object(pygame.sprite.Sprite):
         
         self.pos += self.speed
 
-    def draw(self, screen):
-            pygame.draw.circle(screen, self.color, (int(self.pos.x), int(self.pos.y)), self.radius)
-            pygame.draw.line(screen, THECOLORS['white'], (self.pos.x, self.pos.y), (self.pos.x + self.speed.x*2, self.pos.y + self.speed.y*2), 5)
 
 class Line:
-    
     def __init__(self, x, y):
-        self.posx = x
-        self.posy = y
+        self._pos = Vec2d(x,y)
         self.direction = None
         self.length = None
+        self.w = None
+        self.l = None
 
     def draw(self, screen, direction, length, color = THECOLORS['white']):
         self.length = length
         if direction == HORISONTAL:
-            pygame.draw.line(screen, color, (self.posx, self.posy), (length, self.posy), 3)
+            self.w = 3
+            self.l = length
+            pygame.draw.line(screen, color, (self._pos.x, self._pos.y), (self._pos.x + length, self._pos.y), 3)
         if direction == VERTICAL: 
-            pygame.draw.line(screen, color, (self.posx, self.posy), (self.posx, length), 3)
+            self.w = length
+            self.l = 3
+            pygame.draw.line(screen, color, (self._pos.x, self._pos.y), (self._pos.x, self._pos.y + length), 3)
 
-    def get_pos(self):
-        return ((self.posx, self.posy), self.length)
-        
+    @property
+    def pos(self):
+        return Vec2d(self._pos.x, self._pos.y + (self.length / 2))
