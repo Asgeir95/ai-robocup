@@ -14,7 +14,7 @@ class Program:
         self.vertical_list = []
         self.goalline_list = []
         self.keeper_line_list = []
-        ball = Ball(BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
+        ball = Ball(random.uniform(0.75, 1.25)*BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
         self.red = Team(RED)
         self.blue = Team(BLUE)
         self.add_players()                     
@@ -101,22 +101,22 @@ class Program:
     def add_players(self):
         player1red = Keeper(KEEPER_RED_POS.x, KEEPER_RED_POS.y,  PLAYER_RADIUS, THECOLORS["red"], 1, RED)
         player2red = Player(RED_PLAYER2.x, RED_PLAYER2.y, PLAYER_RADIUS, THECOLORS["red"], 2, RED)
-       # player3red = Player(RED_PLAYER3.x, RED_PLAYER3.y, PLAYER_RADIUS, THECOLORS["red"], 3, RED)
+        player3red = Player(RED_PLAYER3.x, RED_PLAYER3.y, PLAYER_RADIUS, THECOLORS["red"], 3, RED)
         player4red = Player(RED_PLAYER4.x, RED_PLAYER4.y, PLAYER_RADIUS, THECOLORS["red"], 4, RED)
 
         player1blue = Keeper(KEEPER_BLUE_POS.x, KEEPER_BLUE_POS.y, PLAYER_RADIUS, THECOLORS["blue"], 12, BLUE)
         player2blue = Player(BLUE_PLAYER2.x, BLUE_PLAYER2.y, PLAYER_RADIUS, THECOLORS["blue"], 13, BLUE)
-        #player3blue = Player(BLUE_PLAYER3.x, BLUE_PLAYER3.y, PLAYER_RADIUS, THECOLORS["blue"], 14, BLUE)
+        player3blue = Player(BLUE_PLAYER3.x, BLUE_PLAYER3.y, PLAYER_RADIUS, THECOLORS["blue"], 14, BLUE)
         player4blue = Player(BLUE_PLAYER4.x, BLUE_PLAYER4.y, PLAYER_RADIUS, THECOLORS["blue"], 15, BLUE)
 
         self.red.add_player(player1red)
         self.red.add_player(player2red) 
-        #self.red.add_player(player3red)
+        self.red.add_player(player3red)
         self.red.add_player(player4red)
 
         self.blue.add_player(player1blue)
         self.blue.add_player(player2blue)
-        #self.blue.add_player(player3blue)
+        self.blue.add_player(player3blue)
         self.blue.add_player(player4blue)
 
 
@@ -127,6 +127,9 @@ class Program:
         self.ball_list[0].draw(self.screen)
 
     def move_all_players(self):
+        redgoal = self.goalline_list[0]
+        bluegoal = self.goalline_list[1]
+        ball = self.ball_list[0]
         for team in self.teams:
             for player in team.players:
                 # Can not cross other players
@@ -135,37 +138,37 @@ class Program:
 
                 teammate = player.team_has_ball(team.players)
                 if not teammate:
-                    player.move_to_ball(self.ball_list[0], 1000)
+                    player.move_to_ball(ball, 1000)
                     if player._has_ball == True:
                         if player in self.red.players:
-                            goal = self.goalline_list[1]
+                            goal = bluegoal
                             distance_to_goal = player.pos.get_distance(goal.pos)
-                            if  distance_to_goal < 1000:
+                            if  distance_to_goal < VIEW_DISTANCE:
                                 mate = player.find_free_teammate(self.teams, RED)
                                 if mate:
-                                    player.pass_ball(mate, self.ball_list[0])
-                            if distance_to_goal < 250:
-                                player.shoot(goal, self.ball_list[0])
+                                    player.pass_ball(mate, ball)
+                            if distance_to_goal < SHOOT_DISTANCE:
+                                player.shoot(goal, ball)
                         else:
-                            goal = self.goalline_list[0]
+                            goal = redgoal
                             distance_to_goal = player.pos.get_distance(goal.pos)
-                            if  distance_to_goal < 1000:
+                            if  distance_to_goal < VIEW_DISTANCE:
                                 mate = player.find_free_teammate(self.teams, BLUE)
                                 if mate:
-                                    player.pass_ball(mate, self.ball_list[0])
-                            if distance_to_goal < 250:
-                                player.shoot(goal, self.ball_list[0])
+                                    player.pass_ball(mate, ball)
+                            if distance_to_goal < SHOOT_DISTANCE:
+                                player.shoot(goal, ball)
                 
                 # If our team has the ball
                 if teammate:
                     if teammate.team == RED:
-                        goal = self.goalline_list[1]
+                        goal = bluegoal
                     else:
-                        goal = self.goalline_list[0]
+                        goal = redgoal
 
                     player.find_free_space(teammate, goal)
                 # If our team does not have the ball
-        self.ball_list[0].move()
+        ball.move()
 
     def rules(self):
         redgoal = self.goalline_list[0]
@@ -188,7 +191,7 @@ class Program:
                 print("Throwin, reseting")
                 self.reset()
         for line in self.vertical_list:
-            if self.ball_list[0].is_corner(line, self.screen):
+            if self.ball_list[0].is_corner(line):
                 print("Corner, reseting")
                 self.reset()
         
@@ -198,7 +201,7 @@ class Program:
         self.ball_list.clear()
 
         self.add_players()
-        ball = Ball(BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
+        ball = Ball(random.uniform(0.75, 1.25)*BALL_POS.x, BALL_POS.y, 6, THECOLORS["yellow"])
         self.ball_list.append(ball)
     
 
@@ -221,7 +224,7 @@ class Program:
         """
         pygame.init()
         pygame.display.set_caption("ROBOCUP")
-        clock      = pygame.time.Clock()
+        clock = pygame.time.Clock()
         
         while True:
             clock.tick(FPS)
