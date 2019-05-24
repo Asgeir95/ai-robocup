@@ -217,6 +217,13 @@ class Program:
                 if event.key == pygame.K_SPACE:
                     self.reset()
 
+    def scoreboard(self):
+        font = pygame.font.Font('freesansbold.ttf', 32) 
+        text = font.render("Red {} | Blue {}".format(self.redgoals, self.bluegoals), True, THECOLORS["black"], THECOLORS["white"]) 
+        textRect = text.get_rect()  
+        textRect.center = (SCREEN_X // 2, 20)
+        self.screen.blit(text, textRect)  
+
     def run(self):
         """
         The run function that runs all the other functions together and
@@ -233,6 +240,7 @@ class Program:
             self.draw_all()
             self.move_all_players()
             self.rules()
+            self.scoreboard()
             pygame.display.update()
 
 
