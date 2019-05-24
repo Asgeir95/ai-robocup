@@ -17,7 +17,6 @@ class Ball(Object):
         radius = clamp(x*y, 6, 8)
 
         pygame.draw.circle(screen, self.color, (int(self.pos.x), int(self.pos.y)), int(radius))
-        pygame.draw.line(screen, THECOLORS['white'], (self.pos.x, self.pos.y), (self.pos.x + self.speed.x*2, self.pos.y + self.speed.y*2), 5)
 
     def is_goal(self, goal):
         x = goal.pos.x 

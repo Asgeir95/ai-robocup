@@ -8,7 +8,6 @@ class Player(Object):
     
     def draw(self, screen):
             pygame.draw.circle(screen, self.color, (int(self.pos.x), int(self.pos.y)), self.radius)
-            pygame.draw.line(screen, THECOLORS['white'], (self.pos.x, self.pos.y), (self.pos.x + self.speed.x*2, self.pos.y + self.speed.y*2), 5)
             
     def move_to_ball(self, ball, view):
         distance = self.pos.get_distance(ball.pos)
